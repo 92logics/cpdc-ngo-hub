@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>92 Logics prototype · NGO management hub sample</title>
+  <meta name="description" content="92 Logics prototype of an AI-enabled, multi-organisation NGO management hub, prepared as a sample for the Caribbean Policy Development Centre call. Not an official CPDC system. Fictional sample data only. Scripted AI drafts, no live AI API.">
+  <style>
+    :root {
+      --ink: #161b22; --muted: #56606b; --paper: #eef2f6; --card: #ffffff; --line: #d5dde6;
+      --navy: #0b2a4a; --navy-2: #143f6b; --accent: #0f6e56; --accent-2: #0c5c48;
+      --sample: #6b4f1d; --sample-bg: #f7f0e2; --alert: #7a2e2e; --alert-bg: #f8ecec;
+      --ok: #1d6b3a; --ok-bg: #e7f4ec; --warn: #7a5410; --warn-bg: #fbf1dc;
+      --shadow: 0 10px 28px rgba(11, 42, 74, 0.07);
+      --serif: Georgia, "Iowan Old Style", Palatino, "Palatino Linotype", serif;
+      --sans: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; color: var(--ink);
+      background: radial-gradient(1000px 380px at 8% -8%, #d9e6f5 0%, transparent 55%), var(--paper);
+      font-family: var(--sans); font-size: 16px; line-height: 1.5;
+    }
+    .skip { position: absolute; left: -999px; top: 0; background: #fff; padding: 0.5rem 1rem; }
+    .skip:focus { left: 0.5rem; top: 0.5rem; z-index: 50; }
+    .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    .banner { background: var(--navy); color: #f3f7fb; padding: 0.65rem 1.25rem; text-align: center; font-size: 0.95rem; }
+    .top { max-width: 1180px; margin: 0 auto; padding: 1.5rem 1.25rem 0.5rem; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem 1.75rem; align-items: end; }
+    .brand { display: flex; gap: 0.85rem; align-items: center; }
+    .mark { width: 3rem; height: 3rem; display: grid; place-items: center; background: var(--navy); color: #f3f7fb; font-family: var(--serif); font-weight: 700; letter-spacing: -0.04em; }
+    .eyebrow { margin: 0; color: var(--accent); font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; }
+    .top h1 { margin: 0.15rem 0 0; font-family: var(--serif); font-size: 1.7rem; font-weight: 650; letter-spacing: -0.02em; }
+    .lede { margin: 0; color: var(--muted); max-width: 46rem; font-size: 0.98rem; }
+    .wrap { max-width: 1180px; margin: 1rem auto 2rem; padding: 0 1.25rem; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+    h2 { font-family: var(--serif); font-weight: 650; font-size: 1.3rem; margin: 0 0 0.6rem; letter-spacing: -0.01em; }
+    h3 { font-size: 1rem; margin: 0 0 0.5rem; }
+    .muted { color: var(--muted); }
+    .fine { color: var(--muted); font-size: 0.84rem; margin: 0.6rem 0 0; }
+    .sample-note { margin: 0 0 0.75rem; padding: 0.45rem 0.65rem; border-radius: 8px; background: var(--sample-bg); color: var(--sample); font-size: 0.85rem; }
+    .alert { margin: 0 0 0.75rem; padding: 0.45rem 0.65rem; border-radius: 8px; background: var(--alert-bg); color: var(--alert); font-size: 0.88rem; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; margin: 0.7rem 0 0.25rem; }
+    input, select, textarea { width: 100%; font: inherit; padding: 0.55rem 0.7rem; border: 1px solid #b9c4d0; border-radius: 10px; background: #fff; color: var(--ink); }
+    textarea { min-height: 14rem; resize: vertical; line-height: 1.45; }
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid #f0b429; outline-offset: 2px; }
+    button { font: inherit; cursor: pointer; border-radius: 10px; }
+    .btn { border: 0; background: var(--accent); color: #fff; padding: 0.55rem 0.95rem; font-weight: 600; }
+    .btn:hover { background: var(--accent-2); }
+    .btn.secondary { background: #e8eef5; color: var(--navy-2); }
+    .btn.secondary:hover { background: #d9e3ee; }
+    .btn.danger { background: var(--alert); }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
+    .login { max-width: 560px; margin: 0 auto; padding: 1.5rem; }
+    .steps { display: flex; gap: 0.5rem; margin: 0 0 1rem; padding: 0; list-style: none; font-size: 0.82rem; }
+    .steps li { padding: 0.2rem 0.6rem; border-radius: 999px; background: #e8eef5; color: var(--navy-2); }
+    .steps li[aria-current="step"] { background: var(--navy); color: #fff; }
+    .code { font-family: ui-monospace, Consolas, monospace; letter-spacing: 0.25em; font-size: 1.2rem; }
+    .appbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); background: #f8fbfd; border-radius: 14px 14px 0 0; }
+    .who { margin: 0; font-size: 0.9rem; }
+    .pill { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; background: #e8eef5; color: var(--navy-2); font-size: 0.78rem; font-weight: 600; }
+    .pill.ok { background: var(--ok-bg); color: var(--ok); }
+    .pill.warn { background: var(--warn-bg); color: var(--warn); }
+    .pill.bad { background: var(--alert-bg); color: var(--alert); }
+    .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+    nav.side { border-right: 1px solid var(--line); padding: 0.75rem; }
+    nav.side [role="tablist"] { display: flex; flex-direction: column; gap: 0.3rem; }
+    nav.side button { text-align: left; border: 1px solid transparent; background: transparent; color: var(--ink); padding: 0.55rem 0.7rem; font-size: 0.93rem; }
+    nav.side button:hover { background: #f1f5f9; }
+    nav.side button[aria-selected="true"] { background: var(--navy); color: #fff; }
+    .panel { padding: 1.1rem 1.2rem 1.4rem; min-width: 0; }
+    .kpi { padding: 0.8rem 0.9rem; border: 1px solid var(--line); border-radius: 12px; background: #fbfcfe; }
+    .kpi .v { font-size: 1.55rem; font-weight: 700; font-family: var(--serif); }
+    .kpi .l { font-size: 0.82rem; color: var(--muted); }
+    .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin: 0.5rem 0 1rem; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+    caption { text-align: left; padding: 0.6rem 0.75rem; font-weight: 650; background: #f8fbfd; border-bottom: 1px solid var(--line); }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e6ebf1; text-align: left; vertical-align: top; }
+    th { background: #f8fbfd; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    tfoot td { font-weight: 700; background: #f8fbfd; }
+    .bar { height: 0.6rem; background: #e3e9f0; border-radius: 999px; overflow: hidden; min-width: 80px; }
+    .bar > span { display: block; height: 100%; background: var(--accent); }
+    .bar.over > span { background: var(--alert); }
+    .form-inline { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; align-items: end; padding: 0.75rem; border: 1px dashed #b9c4d0; border-radius: 12px; margin: 0.5rem 0 1rem; }
+    .form-inline label { margin-top: 0; }
+    .review { border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem; background: #fbfcfe; }
+    .audit li { margin: 0.25rem 0; font-size: 0.88rem; }
+    ul.check { padding-left: 1.1rem; margin: 0.25rem 0; }
+    ul.check li { margin: 0.3rem 0; }
+    footer { max-width: 1180px; margin: 0 auto 2rem; padding: 0 1.25rem; color: var(--muted); font-size: 0.88rem; text-align: center; }
+    footer p { margin: 0.2rem 0; }
+    [hidden] { display: none !important; }
+    .layout > *, .grid2 > *, .grid4 > *, .wrap, .card { min-width: 0; }
+    .nw { white-space: nowrap; }
+    @media (max-width: 860px) {
+      .top, .layout, .grid2 { grid-template-columns: 1fr; }
+      .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      nav.side { border-right: 0; border-bottom: 1px solid var(--line); }
+      nav.side [role="tablist"] { flex-direction: row; overflow-x: auto; }
+      nav.side button { white-space: nowrap; }
+    }
+    @media (prefers-reduced-motion: no-preference) { .bar > span { transition: width 0.4s ease; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the hub</a>
+  <div class="banner" role="note">
+    <strong>92 Logics prototype.</strong>
+    Not an official CPDC system. Fictional sample organisations and figures only. AI drafts are scripted templates; no live AI service is called and nothing leaves your browser.
+  </div>
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">92</div>
+      <div>
+        <p class="eyebrow">92 Logics prototype · sample for CPDC</p>
+        <h1>NGO Management Hub</h1>
+      </div>
+    </div>
+    <p class="lede">A clickable sample of a multi-organisation hub for small and medium-sized Caribbean NGOs: sign-in with roles and a mock MFA step, a dashboard, M&amp;E indicators, project plans and tasks, budgets with a simple general ledger, a document library, PDF and Excel/CSV exports, and AI-assisted drafting with human review and an audit trail.</p>
+  </header>
+
+  <div class="wrap" id="main" tabindex="-1">
+    <p id="live" class="sr" aria-live="polite"></p>
+    <section id="login" class="card login" aria-labelledby="login-h">
+      <ol class="steps" aria-label="Sign-in steps">
+        <li id="st1" aria-current="step">1. Account</li>
+        <li id="st2">2. Verification code</li>
+      </ol>
+      <form id="f-login" novalidate>
+        <h2 id="login-h">Sign in to the hub</h2>
+        <p class="sample-note">Sample sign-in. Any password works. Pick an organisation and a role to see how permissions and data separation change.</p>
+        <label for="l-org">Organisation</label>
+        <select id="l-org" required></select>
+        <label for="l-role">Role</label>
+        <select id="l-role" required>
+          <option value="Admin">Admin: users, settings, approvals</option>
+          <option value="Programme Officer">Programme Officer: projects, M&amp;E, drafting</option>
+          <option value="Finance">Finance: budgets, ledger, vouchers</option>
+          <option value="Viewer">Viewer: read-only</option>
+        </select>
+        <label for="l-email">Email</label>
+        <input id="l-email" type="email" autocomplete="off" value="demo.user@example.org" required>
+        <label for="l-pass">Password</label>
+        <input id="l-pass" type="password" autocomplete="off" value="sample-only" required aria-describedby="l-pass-h">
+        <p id="l-pass-h" class="fine">Production would enforce password rules, lockout after failed attempts, account recovery and session timeout.</p>
+        <p class="row" style="margin-top:1rem"><button class="btn" type="submit">Continue</button></p>
+      </form>
+      <form id="f-mfa" hidden novalidate>
+        <h2 tabindex="-1" id="mfa-h">Enter your verification code</h2>
+        <p class="sample-note">Mock MFA step. In production the code would come from an authenticator app or email. For this sample, the code is <span class="code" id="mfa-show">000000</span>.</p>
+        <label for="l-code">6-digit code</label>
+        <input id="l-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" aria-describedby="mfa-err">
+        <p id="mfa-err" class="alert" role="alert" hidden>That code does not match. Try the code shown above.</p>
+        <p class="row" style="margin-top:1rem"><button class="btn" type="submit">Verify and sign in</button><button class="btn secondary" type="button" id="mfa-back">Back</button></p>
+      </form>
+    </section>
+    <section id="app" class="card" hidden aria-label="NGO hub workspace">
+      <div class="appbar">
+        <p class="who"><strong id="a-org"></strong> <span class="muted" id="a-country"></span><br><span class="pill" id="a-role"></span> <span class="muted" id="a-scope"></span></p>
+        <div class="row"><button class="btn secondary" type="button" id="reset">Reset sample data</button><button class="btn secondary" type="button" id="logout">Sign out</button></div>
+      </div>
+      <div class="layout">
+        <nav class="side" aria-label="Hub modules"><div role="tablist" aria-orientation="vertical" id="tabs"></div></nav>
+        <div class="panel" id="panel" role="tabpanel" tabindex="0"></div>
+      </div>
+    </section>
+  </div>
+  <footer>
+    <p>Prototype by 92 Logics · cowork@92logics.com · not an official CPDC system</p>
+    <p>All organisations, people, projects and amounts are fictional samples.</p>
+  </footer>
+  <noscript><p class="banner">This prototype needs JavaScript in the browser. It does not call any server or store personal data.</p></noscript>
+<script>
+(function () {
+  "use strict";
+  var AS_OF = "2026-10-22";
+  var MFA_CODE = "482913";
+
+  // Fictional sample data only.
+  function seed() {
+    return [
+      org("cgn", "Coral Guardians Network (sample)", "Barbados", "USD", [
+        ["P1", "Reef restoration and community monitoring", "GEF SGP (sample grant)", "2026-01-15", "2027-03-31"],
+        ["P2", "Fisherfolk livelihoods training", "Sample Foundation", "2026-04-01", "2026-12-31"]
+      ], [
+        ["P1", "Hectares of reef under active restoration", "ha", 0, 4, 2.6],
+        ["P1", "Community monitors trained", "people", 0, 40, 31],
+        ["P1", "Monitoring surveys completed", "surveys", 0, 12, 6],
+        ["P2", "Fisherfolk completing training", "people", 0, 60, 52],
+        ["P2", "Participants reporting improved income", "%", 0, 30, 0]
+      ], [
+        ["P1", "Quarterly reef health survey (Q3)", "Programme Officer", "2026-10-10", "Done"],
+        ["P1", "Upload survey photos as verification evidence", "Programme Officer", "2026-10-18", "Open"],
+        ["P1", "Nursery maintenance visit", "Field team", "2026-10-30", "In progress"],
+        ["P1", "Prepare Q3 narrative report", "Programme Officer", "2026-11-05", "Open"],
+        ["P2", "Book venue for module 4", "Admin", "2026-10-15", "Open"],
+        ["P2", "Collect post-training income survey", "Programme Officer", "2026-11-20", "Open"],
+        ["P2", "Pay trainer invoice INV-2026-031", "Finance", "2026-10-25", "In progress"]
+      ], [
+        ["P1", "Personnel", 18000], ["P1", "Equipment and materials", 9500], ["P1", "Travel and field costs", 4200],
+        ["P2", "Training delivery", 7800], ["P2", "Venue and logistics", 2400], ["P2", "Monitoring and evaluation", 1500]
+      ], [
+        ["2026-02-01", "RC-001", "Grant income received", "P1", "", 0, 31700, "Receipt"],
+        ["2026-03-10", "PV-014", "Restoration materials (sample supplier)", "P1", "Equipment and materials", 6200, 0, "Invoice"],
+        ["2026-06-30", "PV-022", "Field coordinator stipend Q2", "P1", "Personnel", 9000, 0, "Payment voucher"],
+        ["2026-08-14", "PV-027", "Boat hire for surveys", "P1", "Travel and field costs", 3100, 0, "Invoice"],
+        ["2026-09-30", "PV-033", "Field coordinator stipend Q3", "P1", "Personnel", 4500, 0, ""],
+        ["2026-04-05", "RC-002", "Foundation grant received", "P2", "", 0, 11700, "Receipt"],
+        ["2026-07-20", "PV-029", "Trainer fees modules 1 to 3", "P2", "Training delivery", 5400, 0, "Invoice"],
+        ["2026-09-12", "PV-031", "Community centre hire", "P2", "Venue and logistics", 2650, 0, "Receipt"]
+      ], [
+        ["Grant agreement (sample).pdf", "Contract", "P1", "2026-01-15"],
+        ["Q2 reef survey verification photos.zip", "Output verification", "P1", "2026-07-05"],
+        ["PV-022 payment voucher.pdf", "Payment voucher", "P1", "2026-06-30"],
+        ["Trainer invoice INV-2026-031.pdf", "Invoice", "P2", "2026-10-02"],
+        ["Training attendance sheets.xlsx", "Output verification", "P2", "2026-09-20"],
+        ["Consultant final output - curriculum.docx", "Consultant output", "P2", "2026-05-10"]
+      ]),
+      org("iyf", "Island Youth Futures (sample)", "Saint Lucia", "USD", [
+        ["P1", "Digital skills for out-of-school youth", "GEF SGP (sample grant)", "2026-03-01", "2027-02-28"],
+        ["P2", "Youth climate ambassadors", "Sample Trust", "2026-05-01", "2026-12-15"]
+      ], [
+        ["P1", "Young people enrolled", "people", 0, 120, 96],
+        ["P1", "Certificates awarded", "people", 0, 90, 41],
+        ["P2", "Ambassadors active", "people", 0, 25, 25],
+        ["P2", "School outreach sessions held", "sessions", 0, 30, 12]
+      ], [
+        ["P1", "Cohort 3 enrolment drive", "Programme Officer", "2026-10-12", "Done"],
+        ["P1", "Laptop maintenance check", "Admin", "2026-10-19", "Open"],
+        ["P1", "Mid-term learner survey", "Programme Officer", "2026-11-10", "Open"],
+        ["P2", "Schedule November school sessions", "Programme Officer", "2026-10-28", "In progress"],
+        ["P2", "Reconcile ambassador transport claims", "Finance", "2026-10-16", "Open"]
+      ], [
+        ["P1", "Facilitators", 14000], ["P1", "Equipment", 8000], ["P1", "Connectivity", 2600],
+        ["P2", "Outreach materials", 3200], ["P2", "Transport", 2800]
+      ], [
+        ["2026-03-05", "RC-101", "Grant income received", "P1", "", 0, 24600, "Receipt"],
+        ["2026-03-20", "PV-110", "Refurbished laptops (sample supplier)", "P1", "Equipment", 7600, 0, "Invoice"],
+        ["2026-07-31", "PV-118", "Facilitator fees Jun to Jul", "P1", "Facilitators", 6000, 0, "Payment voucher"],
+        ["2026-09-30", "PV-124", "Data plans Q3", "P1", "Connectivity", 900, 0, "Receipt"],
+        ["2026-05-03", "RC-102", "Trust grant received", "P2", "", 0, 6000, "Receipt"],
+        ["2026-08-22", "PV-121", "Printed outreach kits", "P2", "Outreach materials", 2100, 0, "Invoice"],
+        ["2026-09-15", "PV-123", "Transport claims Aug to Sep", "P2", "Transport", 3050, 0, "Payment voucher"]
+      ], [
+        ["Programme agreement (sample).pdf", "Contract", "P1", "2026-03-01"],
+        ["Cohort 2 certificates list.xlsx", "Output verification", "P1", "2026-08-30"],
+        ["PV-118 payment voucher.pdf", "Payment voucher", "P1", "2026-07-31"],
+        ["Outreach kit invoice.pdf", "Invoice", "P2", "2026-08-22"]
+      ]),
+      org("cwa", "Caribbean Women in Agriculture Collective (sample)", "Jamaica", "USD", [
+        ["P1", "Climate-smart farming demonstration plots", "GEF SGP (sample grant)", "2026-02-01", "2027-01-31"]
+      ], [
+        ["P1", "Demonstration plots established", "plots", 0, 10, 8],
+        ["P1", "Women farmers trained", "people", 0, 150, 118],
+        ["P1", "Rainwater systems installed", "systems", 0, 20, 7]
+      ], [
+        ["P1", "Install rainwater tanks batch 2", "Field team", "2026-10-14", "In progress"],
+        ["P1", "Farmer field day", "Programme Officer", "2026-11-02", "Open"],
+        ["P1", "Collect receipts for seed purchase", "Finance", "2026-10-09", "Open"]
+      ], [
+        ["P1", "Training", 9000], ["P1", "Inputs and seeds", 6500], ["P1", "Water systems", 12000]
+      ], [
+        ["2026-02-10", "RC-201", "Grant income received", "P1", "", 0, 27500, "Receipt"],
+        ["2026-04-12", "PV-205", "Seed and inputs purchase", "P1", "Inputs and seeds", 5900, 0, ""],
+        ["2026-06-18", "PV-209", "Training facilitators", "P1", "Training", 4800, 0, "Payment voucher"],
+        ["2026-08-30", "PV-214", "Rainwater tanks batch 1", "P1", "Water systems", 5600, 0, "Invoice"]
+      ], [
+        ["Grant agreement (sample).pdf", "Contract", "P1", "2026-02-01"],
+        ["Plot photos June.zip", "Output verification", "P1", "2026-06-30"],
+        ["Tank supplier invoice.pdf", "Invoice", "P1", "2026-08-30"]
+      ]),
+      org("mwt", "Mangrove Watch Trust (sample)", "Trinidad and Tobago", "USD", [
+        ["P1", "Mangrove replanting and school education", "GEF SGP (sample grant)", "2026-01-10", "2026-12-20"]
+      ], [
+        ["P1", "Mangrove seedlings planted", "seedlings", 0, 5000, 4100],
+        ["P1", "Seedling survival rate", "%", 0, 70, 64],
+        ["P1", "Schools reached", "schools", 0, 12, 4]
+      ], [
+        ["P1", "Survival count at site B", "Field team", "2026-10-20", "Open"],
+        ["P1", "School visits block 3", "Programme Officer", "2026-11-12", "Open"],
+        ["P1", "Final report outline", "Programme Officer", "2026-11-30", "Open"]
+      ], [
+        ["P1", "Nursery and planting", 11000], ["P1", "Education materials", 3000], ["P1", "Coordination", 6000]
+      ], [
+        ["2026-01-20", "RC-301", "Grant income received", "P1", "", 0, 20000, "Receipt"],
+        ["2026-03-15", "PV-303", "Nursery supplies", "P1", "Nursery and planting", 7200, 0, "Invoice"],
+        ["2026-06-30", "PV-308", "Coordinator stipend H1", "P1", "Coordination", 3000, 0, "Payment voucher"],
+        ["2026-09-05", "PV-311", "Activity booklets print run", "P1", "Education materials", 3400, 0, "Invoice"]
+      ], [
+        ["Grant agreement (sample).pdf", "Contract", "P1", "2026-01-10"],
+        ["Planting log Q3.xlsx", "Output verification", "P1", "2026-10-01"]
+      ])
+    ];
+  }
+  function org(id, name, country, cur, projects, inds, tasks, lines, ledger, docs) {
+    var n = 0;
+    return {
+      id: id, name: name, country: country, cur: cur,
+      projects: projects.map(function (p) { return { id: p[0], name: p[1], funder: p[2], start: p[3], end: p[4] }; }),
+      indicators: inds.map(function (i) { return { id: "I" + (++n), project: i[0], name: i[1], unit: i[2], baseline: i[3], target: i[4], actual: i[5], updated: "2026-09-30" }; }),
+      tasks: tasks.map(function (t, k) { return { id: "T" + (k + 1), project: t[0], name: t[1], owner: t[2], due: t[3], status: t[4] }; }),
+      lines: lines.map(function (l) { return { project: l[0], name: l[1], budget: l[2] }; }),
+      ledger: ledger.map(function (e) { return { date: e[0], ref: e[1], desc: e[2], project: e[3], line: e[4], debit: e[5], credit: e[6], doc: e[7] }; }),
+      docs: docs.map(function (d) { return { name: d[0], type: d[1], project: d[2], date: d[3], size: "" }; }),
+      drafts: [], audit: []
+    };
+  }
+
+  var ORGS = seed();
+  var S = { org: null, role: null, email: "", tab: "dash", draft: null, report: "progress", docFilter: "" };
+  var PERM = {
+    "Admin": { edit: true, finance: true, approve: true, draft: true, audit: true },
+    "Programme Officer": { edit: true, finance: false, approve: true, draft: true, audit: false },
+    "Finance": { edit: false, finance: true, approve: false, draft: true, audit: false },
+    "Viewer": { edit: false, finance: false, approve: false, draft: false, audit: false }
+  };
+  function can(k) { return PERM[S.role][k]; }
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function money(v) { return (S.org ? S.org.cur + " " : "") + Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 }); }
+  function pct(a, b) { return b ? Math.round((a / b) * 100) : 0; }
+  function stamp() { return new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC"; }
+  function say(msg) { $("live").textContent = ""; setTimeout(function () { $("live").textContent = msg; }, 30); }
+  function log(action) { S.org.audit.unshift({ at: stamp(), who: S.role + " (" + S.email + ")", action: action }); }
+  function pname(id) { var p = S.org.projects.filter(function (x) { return x.id === id; })[0]; return p ? p.name : id; }
+  function overdue(t) { return t.status !== "Done" && t.due < AS_OF; }
+  function spent(o, project, line) { return o.ledger.filter(function (e) { return e.project === project && e.line === line; }).reduce(function (a, e) { return a + e.debit; }, 0); }
+  function indPct(i) { return pct(i.actual - i.baseline, i.target - i.baseline); }
+  function indStatus(i) { var p = indPct(i); return p >= 75 ? ["On track", "ok"] : p >= 40 ? ["Watch", "warn"] : ["Behind", "bad"]; }
+  function bar(p, over) { return '<div class="bar' + (over ? " over" : "") + '" role="img" aria-label="' + p + ' percent"><span style="width:' + Math.min(100, p) + '%"></span></div>'; }
+  function table(caption, head, rows, foot, numCols) {
+    numCols = numCols || [];
+    function td(c, i) { return "<td" + (numCols.indexOf(i) > -1 ? ' class="num"' : "") + ">" + c + "</td>"; }
+    var h = '<div class="tablewrap"><table><caption>' + esc(caption) + "</caption><thead><tr>" +
+      head.map(function (x, i) { return '<th scope="col"' + (numCols.indexOf(i) > -1 ? ' class="num"' : "") + ">" + esc(x) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      (rows.length ? rows.map(function (r) { return "<tr>" + r.map(td).join("") + "</tr>"; }).join("") : '<tr><td colspan="' + head.length + '">No records.</td></tr>') + "</tbody>";
+    if (foot) h += "<tfoot><tr>" + foot.map(td).join("") + "</tr></tfoot>";
+    return h + "</table></div>";
+  }
+  function projectOptions(sel) { return S.org.projects.map(function (p) { return '<option value="' + p.id + '"' + (p.id === sel ? " selected" : "") + ">" + esc(p.name) + "</option>"; }).join(""); }
+  function readOnlyNote(what) { return '<p class="sample-note">Your role (' + esc(S.role) + ") can view " + what + " but not change it.</p>"; }
+  function plain(name) { return name.replace(" (sample)", ""); }
+
+  // ---------- sign-in ----------
+  $("l-org").innerHTML = ORGS.map(function (o) { return '<option value="' + o.id + '">' + esc(o.name) + " · " + esc(o.country) + "</option>"; }).join("");
+  $("mfa-show").textContent = MFA_CODE;
+  function step(n) { $("st1")[n === 1 ? "setAttribute" : "removeAttribute"]("aria-current", "step"); $("st2")[n === 2 ? "setAttribute" : "removeAttribute"]("aria-current", "step"); $("f-login").hidden = n !== 1; $("f-mfa").hidden = n !== 2; }
+  $("f-login").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!$("l-email").value || !$("l-pass").value) { say("Enter an email and password."); return; }
+    step(2); $("l-code").value = ""; $("mfa-err").hidden = true; $("mfa-h").focus();
+  });
+  $("mfa-back").addEventListener("click", function () { step(1); $("l-org").focus(); });
+  $("f-mfa").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if ($("l-code").value.trim() !== MFA_CODE) { $("mfa-err").hidden = false; $("l-code").focus(); return; }
+    S.org = ORGS.filter(function (o) { return o.id === $("l-org").value; })[0];
+    S.role = $("l-role").value; S.email = $("l-email").value.trim(); S.tab = "dash"; S.draft = null; S.docFilter = "";
+    log("Signed in with password and verification code");
+    $("login").hidden = true; $("app").hidden = false;
+    $("a-org").textContent = S.org.name; $("a-country").textContent = "· " + S.org.country;
+    $("a-role").textContent = S.role;
+    $("a-scope").textContent = "You see only this organisation's users, projects, finances and documents.";
+    renderTabs(); render(); $("tab-dash").focus(); say("Signed in as " + S.role + " for " + S.org.name);
+  });
+  $("logout").addEventListener("click", function () { log("Signed out"); S.org = null; $("app").hidden = true; $("login").hidden = false; step(1); $("l-org").focus(); say("Signed out"); });
+  $("reset").addEventListener("click", function () {
+    var id = S.org.id, fresh = seed().filter(function (o) { return o.id === id; })[0];
+    ORGS[ORGS.indexOf(S.org)] = fresh; S.org = fresh; S.draft = null;
+    log("Reset sample data"); render(); say("Sample data reset");
+  });
+
+  // ---------- tabs ----------
+  var TABS = [["dash", "Dashboard"], ["me", "M&E indicators"], ["proj", "Projects and tasks"], ["fin", "Budget and ledger"],
+    ["docs", "Document library"], ["rep", "Reports and exports"], ["ai", "AI drafting"], ["audit", "Audit trail"]];
+  function renderTabs() {
+    $("tabs").innerHTML = TABS.map(function (t) {
+      var on = S.tab === t[0];
+      return '<button type="button" role="tab" id="tab-' + t[0] + '" aria-controls="panel" aria-selected="' + on + '" tabindex="' + (on ? 0 : -1) + '" data-tab="' + t[0] + '">' + esc(t[1]) + "</button>";
+    }).join("");
+  }
+  function go(tab) { S.tab = tab; renderTabs(); render(); $("tab-" + tab).focus(); }
+  $("tabs").addEventListener("click", function (e) { var b = e.target.closest("[data-tab]"); if (b) go(b.getAttribute("data-tab")); });
+  $("tabs").addEventListener("keydown", function (e) {
+    var ids = TABS.map(function (t) { return t[0]; }), i = ids.indexOf(S.tab), k = e.key;
+    if (k === "ArrowDown" || k === "ArrowRight") i = (i + 1) % ids.length;
+    else if (k === "ArrowUp" || k === "ArrowLeft") i = (i - 1 + ids.length) % ids.length;
+    else if (k === "Home") i = 0; else if (k === "End") i = ids.length - 1; else return;
+    e.preventDefault(); go(ids[i]);
+  });
+  function render() {
+    $("panel").setAttribute("aria-labelledby", "tab-" + S.tab);
+    $("panel").innerHTML = { dash: vDash, me: vME, proj: vProj, fin: vFin, docs: vDocs, rep: vRep, ai: vAI, audit: vAudit }[S.tab]();
+    bind();
+  }
+
+  // ---------- dashboard ----------
+  function missingChecks() {
+    var o = S.org, out = [];
+    o.tasks.filter(overdue).forEach(function (t) { out.push("Overdue task: " + t.name + " (due " + t.due + ", " + pname(t.project) + ")"); });
+    o.lines.forEach(function (l) { var s = spent(o, l.project, l.name); if (s > l.budget) out.push("Budget line over by " + money(s - l.budget) + ": " + l.name + " (" + pname(l.project) + ")"); });
+    o.indicators.forEach(function (i) { if (indStatus(i)[0] === "Behind") out.push("Indicator behind target: " + i.name + " (" + i.actual + " of " + i.target + " " + i.unit + ")"); });
+    o.ledger.forEach(function (e) { if (!e.doc) out.push("Ledger entry " + e.ref + " has no supporting document linked"); });
+    return out;
+  }
+  function kpi(v, l) { return '<div class="kpi"><div class="v">' + v + '</div><div class="l">' + esc(l) + "</div></div>"; }
+  function vDash() {
+    var o = S.org, open = o.tasks.filter(function (t) { return t.status !== "Done"; }).length, od = o.tasks.filter(overdue).length;
+    var bud = o.lines.reduce(function (a, l) { return a + l.budget; }, 0), sp = o.ledger.reduce(function (a, e) { return a + e.debit; }, 0);
+    var ont = o.indicators.filter(function (i) { return indStatus(i)[0] === "On track"; }).length, checks = missingChecks();
+    return '<h2>Dashboard</h2><p class="muted">Sample position as of ' + AS_OF + ". " + esc(o.name) + " has " + o.projects.length + " active project(s).</p>" +
+      '<div class="grid4">' + kpi(o.projects.length, "Active projects") + kpi(open + (od ? ' <span class="pill bad">' + od + " overdue</span>" : ""), "Open tasks") +
+      kpi(pct(sp, bud) + "%", "Budget spent (" + money(sp) + " of " + money(bud) + ")") + kpi(ont + " / " + o.indicators.length, "Indicators on track") + "</div>" +
+      '<div class="grid2" style="margin-top:1rem"><div>' +
+      table("Projects", ["Project", "Funder", "Period", "Tasks done"], o.projects.map(function (p) {
+        var ts = o.tasks.filter(function (t) { return t.project === p.id; }), d = ts.filter(function (t) { return t.status === "Done"; }).length;
+        return [esc(p.name), esc(p.funder), esc(p.start + " to " + p.end), d + " of " + ts.length + bar(pct(d, ts.length))];
+      })) +
+      '</div><div><div class="review"><h3>Needs attention <span class="pill">AI-assisted check</span></h3><p class="fine" style="margin-top:0">Scan for missing or overdue information. A person decides what to do.</p>' +
+      (checks.length ? '<ul class="check">' + checks.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul>" : "<p>Nothing missing or overdue.</p>") +
+      (can("draft") ? '<p class="row"><button class="btn secondary" type="button" data-go-ai="checks">Draft a follow-up note</button></p>' : "") + "</div></div></div>";
+  }
+
+  // ---------- M&E ----------
+  function vME() {
+    var rows = S.org.indicators.map(function (i) {
+      var p = indPct(i), st = indStatus(i);
+      return [esc(pname(i.project)), esc(i.name), esc(i.unit), i.baseline, i.target,
+        can("edit") ? '<label class="sr" for="ia-' + i.id + '">Actual for ' + esc(i.name) + '</label><input style="max-width:7rem" type="number" min="0" step="any" id="ia-' + i.id + '" data-ind="' + i.id + '" value="' + i.actual + '">' : i.actual,
+        p + "%" + bar(p), '<span class="pill ' + st[1] + '">' + st[0] + "</span>", esc(i.updated)];
+    });
+    return '<h2>Monitoring and evaluation</h2><p class="muted">Results indicators with baseline, target and latest actual. Each update is logged in the audit trail; verification evidence sits in the document library.</p>' +
+      (can("edit") ? "" : readOnlyNote("indicators")) +
+      table("Indicators", ["Project", "Indicator", "Unit", "Baseline", "Target", "Actual", "Progress", "Status", "Updated"], rows, null, [3, 4]) +
+      (can("edit") ? '<p class="fine">Change an actual value, then press Tab or Enter to save the progress update.</p>' : "");
+  }
+
+  // ---------- projects ----------
+  function vProj() {
+    var o = S.org;
+    var rows = o.tasks.map(function (t) {
+      var st = t.status === "Done" ? "ok" : overdue(t) ? "bad" : "warn";
+      var ctl = can("edit") ? '<label class="sr" for="ts-' + t.id + '">Status for ' + esc(t.name) + '</label><select id="ts-' + t.id + '" data-task="' + t.id + '">' +
+        ["Open", "In progress", "Done"].map(function (s) { return "<option" + (s === t.status ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select>"
+        : '<span class="pill ' + st + '">' + esc(t.status) + "</span>";
+      return [esc(pname(t.project)), esc(t.name), esc(t.owner), esc(t.due) + (overdue(t) ? ' <span class="pill bad">Overdue</span>' : ""), ctl];
+    });
+    var form = can("edit") ? '<form class="form-inline" id="f-task"><div><label for="nt-p">Project</label><select id="nt-p">' + projectOptions() + "</select></div>" +
+      '<div><label for="nt-n">New task</label><input id="nt-n" required placeholder="e.g. Site visit report"></div>' +
+      '<div><label for="nt-o">Responsible</label><select id="nt-o"><option>Programme Officer</option><option>Finance</option><option>Admin</option><option>Field team</option></select></div>' +
+      '<div><label for="nt-d">Due date</label><input id="nt-d" type="date" required value="2026-11-15"></div>' +
+      '<div><button class="btn" type="submit">Add task</button></div></form>' : readOnlyNote("the workplan");
+    var plans = o.projects.map(function (p) {
+      var ms = o.tasks.filter(function (t) { return t.project === p.id; }).sort(function (a, b) { return a.due < b.due ? -1 : 1; });
+      return '<div class="review" style="margin-bottom:0.75rem"><h3>' + esc(p.name) + '</h3><p class="fine" style="margin-top:0">' + esc(p.funder) + " · " + esc(p.start) + " to " + esc(p.end) + "</p><ol>" +
+        ms.map(function (t) { return "<li>" + esc(t.due) + " · " + esc(t.name) + ' <span class="muted">(' + esc(overdue(t) ? "Overdue" : t.status) + ")</span></li>"; }).join("") + "</ol></div>";
+    }).join("");
+    return '<h2>Project plans and tasks</h2><p class="muted">Workplan tasks with owners, due dates and status. Overdue items feed the dashboard check.</p>' + form +
+      table("Workplan tasks", ["Project", "Task", "Responsible", "Due", "Status"], rows) + "<h3>Timeline by project</h3>" + plans;
+  }
+
+  // ---------- finance ----------
+  function vFin() {
+    var o = S.org;
+    var bvr = o.lines.map(function (l) { var s = spent(o, l.project, l.name), p = pct(s, l.budget); return [esc(pname(l.project)), esc(l.name), money(l.budget), money(s), money(l.budget - s), p + "%" + bar(p, s > l.budget)]; });
+    var tb = o.lines.reduce(function (a, l) { return a + l.budget; }, 0), ts = o.lines.reduce(function (a, l) { return a + spent(o, l.project, l.name); }, 0);
+    var bal = 0, led = o.ledger.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).map(function (e) {
+      bal += e.credit - e.debit;
+      return ['<span class="nw">' + esc(e.date) + "</span>", '<span class="nw">' + esc(e.ref) + "</span>", esc(e.desc), '<abbr title="' + esc(pname(e.project)) + '">' + esc(e.project) + "</abbr>", esc(e.line || "Income"), e.debit ? money(e.debit) : "", e.credit ? money(e.credit) : "", money(bal), e.doc ? esc(e.doc) : '<span class="pill bad">Missing</span>'];
+    });
+    var td = o.ledger.reduce(function (a, e) { return a + e.debit; }, 0), tc = o.ledger.reduce(function (a, e) { return a + e.credit; }, 0);
+    var form = can("finance") ? '<form class="form-inline" id="f-led"><div><label for="nl-d">Date</label><input id="nl-d" type="date" value="' + AS_OF + '" required></div>' +
+      '<div><label for="nl-r">Voucher no.</label><input id="nl-r" required placeholder="PV-040"></div>' +
+      '<div><label for="nl-x">Description</label><input id="nl-x" required placeholder="e.g. Field supplies"></div>' +
+      '<div><label for="nl-l">Budget line</label><select id="nl-l">' + o.lines.map(function (l, i) { return '<option value="' + i + '">' + esc(l.name) + " (" + esc(l.project) + ")</option>"; }).join("") + '<option value="inc">Income (credit)</option></select></div>' +
+      '<div><label for="nl-a">Amount</label><input id="nl-a" type="number" min="1" step="1" required placeholder="500"></div>' +
+      '<div><label for="nl-s">Supporting document</label><select id="nl-s"><option>Payment voucher</option><option>Invoice</option><option>Receipt</option><option value="">None yet</option></select></div>' +
+      '<div><button class="btn" type="submit">Post entry</button></div></form>' : readOnlyNote("budgets and the ledger");
+    return '<h2>Budget and general ledger</h2><p class="muted">Budget lines by project and funder, with budget-versus-actual worked out from ledger postings. Each posting links to a voucher, invoice or receipt.</p>' +
+      table("Budget versus actual", ["Project", "Budget line", "Budget", "Actual", "Remaining", "Used"], bvr, ["", "Total", money(tb), money(ts), money(tb - ts), pct(ts, tb) + "%"], [2, 3, 4]) +
+      form + table("General ledger (cash book view)", ["Date", "Ref", "Description", "Project", "Line", "Debit", "Credit", "Balance", "Document"], led, ["", "", "Totals", "", "", money(td), money(tc), money(tc - td), ""], [5, 6, 7]);
+  }
+
+  // ---------- documents ----------
+  var DOCTYPES = ["Contract", "Consultant output", "Payment voucher", "Invoice", "Receipt", "Output verification", "Report"];
+  function vDocs() {
+    var f = S.docFilter, list = S.org.docs.filter(function (d) { return !f || d.type === f; });
+    var form = (can("edit") || can("finance")) ? '<form class="form-inline" id="f-doc"><div><label for="nd-f">File</label><input id="nd-f" type="file"></div>' +
+      '<div><label for="nd-t">Type</label><select id="nd-t">' + DOCTYPES.map(function (t) { return "<option>" + t + "</option>"; }).join("") + "</select></div>" +
+      '<div><label for="nd-p">Linked project</label><select id="nd-p">' + projectOptions() + '</select></div><div><button class="btn" type="submit">Add to library</button></div></form>' +
+      '<p class="fine">In this sample only the file name and size are recorded in your browser. Nothing is uploaded.</p>' : readOnlyNote("documents");
+    return '<h2>Document library</h2><p class="muted">Contracts, consultant outputs, vouchers, invoices, receipts and verification evidence, linked to projects and kept per organisation.</p>' + form +
+      '<label for="df">Filter by type</label><select id="df" style="max-width:20rem"><option value="">All types</option>' + DOCTYPES.map(function (t) { return "<option" + (t === f ? " selected" : "") + ">" + t + "</option>"; }).join("") + "</select>" +
+      table("Documents (" + list.length + ")", ["File", "Type", "Project", "Added", "Size"], list.map(function (d) { return [esc(d.name), esc(d.type), esc(pname(d.project)), esc(d.date), esc(d.size || "sample")]; }));
+  }
+
+  // ---------- reports and exports ----------
+  var REPORTS = { progress: "Project progress report", me: "M&E indicators report", bva: "Budget versus actual", gl: "General ledger", tasks: "Workplan and tasks" };
+  function reportData(k) {
+    var o = S.org;
+    if (k === "me") return { head: ["Project", "Indicator", "Unit", "Baseline", "Target", "Actual", "Progress %", "Status"], rows: o.indicators.map(function (i) { return [pname(i.project), i.name, i.unit, i.baseline, i.target, i.actual, indPct(i), indStatus(i)[0]]; }) };
+    if (k === "bva") return { head: ["Project", "Budget line", "Budget", "Actual", "Remaining", "Used %"], rows: o.lines.map(function (l) { var s = spent(o, l.project, l.name); return [pname(l.project), l.name, l.budget, s, l.budget - s, pct(s, l.budget)]; }) };
+    if (k === "gl") return { head: ["Date", "Ref", "Description", "Project", "Line", "Debit", "Credit", "Document"], rows: o.ledger.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).map(function (e) { return [e.date, e.ref, e.desc, pname(e.project), e.line || "Income", e.debit, e.credit, e.doc || "MISSING"]; }) };
+    if (k === "tasks") return { head: ["Project", "Task", "Responsible", "Due", "Status"], rows: o.tasks.map(function (t) { return [pname(t.project), t.name, t.owner, t.due, overdue(t) ? "Overdue" : t.status]; }) };
+    return { head: ["Project", "Funder", "Period", "Tasks done", "Indicators on track", "Budget used %"], rows: o.projects.map(function (p) {
+      var ts = o.tasks.filter(function (t) { return t.project === p.id; }), is = o.indicators.filter(function (i) { return i.project === p.id; });
+      var ls = o.lines.filter(function (l) { return l.project === p.id; });
+      var b = ls.reduce(function (a, l) { return a + l.budget; }, 0), s = ls.reduce(function (a, l) { return a + spent(o, l.project, l.name); }, 0);
+      return [p.name, p.funder, p.start + " to " + p.end, ts.filter(function (t) { return t.status === "Done"; }).length + " of " + ts.length, is.filter(function (i) { return indStatus(i)[0] === "On track"; }).length + " of " + is.length, pct(s, b)];
+    }) };
+  }
+  function vRep() {
+    var k = S.report, d = reportData(k);
+    return '<h2>Reports and exports</h2><p class="muted">Pick a report, preview it, then download it. Files are built in your browser; nothing is uploaded.</p>' +
+      '<div class="row" style="align-items:end"><div style="min-width:16rem"><label for="rk">Report</label><select id="rk">' + Object.keys(REPORTS).map(function (x) { return '<option value="' + x + '"' + (x === k ? " selected" : "") + ">" + esc(REPORTS[x]) + "</option>"; }).join("") + "</select></div>" +
+      '<button class="btn" type="button" data-exp="pdf">Download PDF</button><button class="btn" type="button" data-exp="xls">Download Excel</button><button class="btn secondary" type="button" data-exp="csv">Download CSV</button></div>' +
+      table(REPORTS[k] + " · " + S.org.name, d.head, d.rows.map(function (r) { return r.map(function (c) { return typeof c === "number" ? c.toLocaleString("en-US") : esc(c); }); }));
+  }
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function download(name, mime, data) {
+    var blob = data instanceof Blob ? data : new Blob([data], { type: mime });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  }
+  function toCSV(head, rows) {
+    function q(v) { v = String(v == null ? "" : v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+    return "\ufeff" + [head].concat(rows).map(function (r) { return r.map(q).join(","); }).join("\r\n");
+  }
+  function toXLS(title, head, rows) {
+    function x(v) { return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    function cell(v) { return typeof v === "number" ? '<Cell><Data ss:Type="Number">' + v + "</Data></Cell>" : '<Cell><Data ss:Type="String">' + x(v) + "</Data></Cell>"; }
+    return '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+      '<Styles><Style ss:ID="h"><Font ss:Bold="1"/></Style></Styles><Worksheet ss:Name="' + x(title.replace(/[^A-Za-z0-9 ]/g, "").slice(0, 30)) + '"><Table>' +
+      '<Row><Cell ss:StyleID="h"><Data ss:Type="String">' + x(title + " - " + S.org.name + " - fictional sample data, 92 Logics prototype") + "</Data></Cell></Row>" +
+      "<Row>" + head.map(function (h) { return '<Cell ss:StyleID="h"><Data ss:Type="String">' + x(h) + "</Data></Cell>"; }).join("") + "</Row>" +
+      rows.map(function (r) { return "<Row>" + r.map(cell).join("") + "</Row>"; }).join("") + "</Table></Worksheet></Workbook>";
+  }
+  // Minimal text PDF writer: Helvetica, A4, multiple pages, no external library.
+  function toPDF(title, blocks) {
+    function clean(s) { return String(s).replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/[\u2013\u2014]/g, "-").replace(/\u00b7/g, "-").replace(/[^\x20-\x7e]/g, "").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)"); }
+    function wrap(s, max) { var out = [], line = ""; String(s).split(/\s+/).forEach(function (w) { if (line && (line + " " + w).length > max) { out.push(line); line = w; } else line = line ? line + " " + w : w; }); if (line) out.push(line); return out.length ? out : [""]; }
+    var pages = [], cur = [], y = 800;
+    function np() { pages.push(cur); cur = []; y = 800; }
+    function txt(font, size, x, s) { if (y < 60) np(); cur.push("BT /" + font + " " + size + " Tf " + x + " " + y + " Td (" + clean(s) + ") Tj ET"); }
+    txt("F2", 16, 50, title); y -= 20;
+    wrap(S.org.name + " - generated " + stamp() + " - 92 Logics prototype, fictional sample data, not an official CPDC system", 120).forEach(function (l) { txt("F1", 8, 50, l); y -= 11; });
+    y -= 10;
+    blocks.forEach(function (b) {
+      if (b.p) b.p.split(/\n/).forEach(function (para) { if (!para.trim()) { y -= 6; return; } wrap(para, 98).forEach(function (l) { txt("F1", 10, 50, l); y -= 14; }); });
+      if (b.table) {
+        var n = b.table.head.length, colw = Math.floor(495 / n), chars = Math.max(6, Math.floor((colw - 6) / 4.2));
+        var line = function (r, font) {
+          var cells = r.map(function (c) { c = typeof c === "number" ? c.toLocaleString("en-US") : String(c); return wrap(c, chars).slice(0, 3); });
+          var h = Math.max.apply(null, cells.map(function (c) { return c.length; }));
+          if (y - (h - 1) * 10 < 60) np();
+          cells.forEach(function (c, ci) { c.forEach(function (l, li) { if (l.length > chars) l = l.slice(0, chars - 1) + "~"; cur.push("BT /" + font + " 8 Tf " + (50 + ci * colw) + " " + (y - li * 10) + " Td (" + clean(l) + ") Tj ET"); }); });
+          y -= h * 10 + 4;
+        };
+        line(b.table.head, "F2"); b.table.rows.forEach(function (r) { line(r, "F1"); }); y -= 8;
+      }
+    });
+    if (cur.length) pages.push(cur);
+    var objs = [null, "<< /Type /Catalog /Pages 2 0 R >>", "", "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>", "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>"], kids = [];
+    pages.forEach(function (p, i) {
+      var content = p.concat(["BT /F1 8 Tf 50 30 Td (" + clean("92 Logics prototype - sample only - page " + (i + 1) + " of " + pages.length) + ") Tj ET"]).join("\n");
+      objs.push("<< /Length " + content.length + " >>\nstream\n" + content + "\nendstream");
+      objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents " + (objs.length - 1) + " 0 R >>");
+      kids.push((objs.length - 1) + " 0 R");
+    });
+    objs[2] = "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + kids.length + " >>";
+    var out = "%PDF-1.4\n", offs = [];
+    for (var i = 1; i < objs.length; i++) { offs[i] = out.length; out += i + " 0 obj\n" + objs[i] + "\nendobj\n"; }
+    var xref = out.length;
+    out += "xref\n0 " + objs.length + "\n0000000000 65535 f \n";
+    for (i = 1; i < objs.length; i++) out += ("0000000000" + offs[i]).slice(-10) + " 00000 n \n";
+    out += "trailer\n<< /Size " + objs.length + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF\n";
+    return new Blob([out], { type: "application/pdf" });
+  }
+  function exportReport(kind) {
+    var d = reportData(S.report), t = REPORTS[S.report], base = slug(S.org.name + " " + t);
+    if (kind === "csv") download(base + ".csv", "text/csv;charset=utf-8", toCSV(d.head, d.rows));
+    else if (kind === "xls") download(base + ".xls", "application/vnd.ms-excel", toXLS(t, d.head, d.rows));
+    else download(base + ".pdf", "application/pdf", toPDF(t, [{ table: d }]));
+    log("Exported " + t + " as " + kind.toUpperCase()); say(t + " downloaded as " + kind.toUpperCase());
+  }
+
+  // ---------- AI drafting (scripted templates, no AI service) ----------
+  var TEMPLATES = {
+    narrative: "Quarterly narrative progress report", meupdate: "M&E update", workplan: "Workplan for the next quarter",
+    budget: "Budget justification and variance note", proposal: "Proposal section: sustainability and results", checks: "Follow-up note on missing or overdue items"
+  };
+  function draftText(k, pid) {
+    var o = S.org, p = o.projects.filter(function (x) { return x.id === pid; })[0];
+    var inds = o.indicators.filter(function (i) { return i.project === pid; }), ts = o.tasks.filter(function (t) { return t.project === pid; });
+    var ls = o.lines.filter(function (l) { return l.project === pid; });
+    var b = ls.reduce(function (a, l) { return a + l.budget; }, 0), s = ls.reduce(function (a, l) { return a + spent(o, l.project, l.name); }, 0);
+    var done = ts.filter(function (t) { return t.status === "Done"; }), od = ts.filter(overdue), next = ts.filter(function (t) { return t.status !== "Done"; });
+    function indLines() { return inds.map(function (i) { return "- " + i.name + ": " + i.actual + " of " + i.target + " " + i.unit + " (" + indPct(i) + "%, " + indStatus(i)[0].toLowerCase() + ")"; }).join("\n"); }
+    var head = TEMPLATES[k] + "\n" + o.name + " - " + p.name + "\nFunder: " + p.funder + " | Period: " + p.start + " to " + p.end + "\n[DRAFT for human review. Check every figure before approval.]\n\n";
+    if (k === "narrative") return head +
+      "1. Summary\nDuring this period " + plain(o.name) + " continued delivery of " + p.name.toLowerCase() + ". " + done.length + " of " + ts.length + " planned tasks are complete and " + pct(s, b) + "% of the project budget (" + money(s) + " of " + money(b) + ") has been spent.\n\n" +
+      "2. Results to date\n" + indLines() + "\n\n3. Activities completed\n" + (done.length ? done.map(function (t) { return "- " + t.name; }).join("\n") : "- None recorded this period") +
+      "\n\n4. Challenges and delays\n" + (od.length ? od.map(function (t) { return "- " + t.name + " was due " + t.due + " and is not yet complete. [Explain cause and recovery plan.]"; }).join("\n") : "- No overdue activities recorded.") +
+      "\n\n5. Next steps\n" + next.map(function (t) { return "- " + t.name + " (due " + t.due + ", " + t.owner + ")"; }).join("\n");
+    if (k === "meupdate") return head + "Indicator status at " + AS_OF + ":\n" + indLines() + "\n\nVerification evidence: see linked documents in the library. [Confirm each value against source records.]\n\nIndicators needing attention:\n" +
+      (inds.filter(function (i) { return indStatus(i)[0] !== "On track"; }).map(function (i) { return "- " + i.name + ": [add reason and corrective action]"; }).join("\n") || "- None");
+    if (k === "workplan") return head + "Proposed workplan, next quarter:\n" + next.map(function (t, n) { return (n + 1) + ". " + t.name + " - responsible: " + t.owner + " - target date: " + t.due + (overdue(t) ? " (carried over, overdue)" : ""); }).join("\n") +
+      "\n" + (next.length + 1) + ". Quarterly M&E data collection - responsible: Programme Officer - target date: [set date]\n" + (next.length + 2) + ". Quarterly financial report to funder - responsible: Finance - target date: [set date]";
+    if (k === "budget") return head + "Total budget " + money(b) + "; spent " + money(s) + " (" + pct(s, b) + "%); remaining " + money(b - s) + ".\n\n" +
+      ls.map(function (l) { var x = spent(o, l.project, l.name), v = l.budget - x; return "- " + l.name + ": budget " + money(l.budget) + ", actual " + money(x) + (v < 0 ? ", OVER by " + money(-v) + ". [Explain the overspend and how it will be covered or reallocated.]" : ", remaining " + money(v) + "."); }).join("\n") +
+      "\n\nPostings should be supported by vouchers, invoices or receipts in the document library. [Finance to confirm.]";
+    if (k === "proposal") return head + "Sustainability and results\n" + plain(o.name) + " will build on results achieved so far:\n" + indLines() +
+      "\n\nTo sustain these results beyond the grant period, the organisation will [describe community ownership, partnerships and follow-on funding]. Records, verification evidence and financial reports are kept in the hub, so progress can be shown to future funders.";
+    return head + "Items that need follow-up across " + plain(o.name) + ":\n" + (missingChecks().map(function (c) { return "- " + c; }).join("\n") || "- Nothing missing or overdue.") +
+      "\n\nPlease update the record or reply with the expected completion date. [Assign each item to an owner.]";
+  }
+  function newDraft(k, pid) {
+    var title = TEMPLATES[k] + " - " + pname(pid);
+    log("Generated scripted draft '" + title + "'");
+    return { k: k, pid: pid, title: title, text: draftText(k, pid), status: "draft", history: [stamp() + " - generated from sample records (scripted template, no AI service)"] };
+  }
+  function approvedList() {
+    var a = S.org.drafts;
+    return '<h3 style="margin-top:1rem">Approved drafts</h3>' + (a.length ? table("Approved drafts", ["Draft", "Project", "Approved by", "When"], a.map(function (x) { return [esc(x.title), esc(pname(x.pid)), esc(x.by), esc(x.at)]; })) : '<p class="muted">None yet.</p>');
+  }
+  function vAI() {
+    if (!can("draft")) return "<h2>AI drafting</h2>" + readOnlyNote("approved drafts") + approvedList();
+    var d = S.draft;
+    var gen = '<div class="review"><h3>1. Generate a draft</h3><p class="sample-note">Scripted template filled from this organisation\'s sample records. No AI service is called. In production, any AI service would be named, costed and approved by CPDC, with the same review step.</p>' +
+      '<div class="grid2"><div><label for="ai-t">Draft type</label><select id="ai-t">' + Object.keys(TEMPLATES).map(function (k) { return '<option value="' + k + '"' + (d && d.k === k ? " selected" : "") + ">" + esc(TEMPLATES[k]) + "</option>"; }).join("") + "</select></div>" +
+      '<div><label for="ai-p">Project</label><select id="ai-p">' + projectOptions(d && d.pid) + "</select></div></div>" +
+      '<p class="row" style="margin-top:0.75rem"><button class="btn" type="button" id="ai-gen">Generate draft</button></p></div>';
+    var rev = "";
+    if (d) {
+      var st = { draft: ["Draft, awaiting review", "warn"], changes: ["Changes requested", "bad"], approved: ["Approved", "ok"] }[d.status];
+      rev = '<div class="review" style="margin-top:1rem"><h3>2. Human review <span class="pill ' + st[1] + '">' + st[0] + "</span></h3>" +
+        '<label for="ai-x">Draft text (edit before approving)</label><textarea id="ai-x"' + (d.status === "approved" ? " readonly" : "") + ">" + esc(d.text) + "</textarea>" +
+        (d.status !== "approved" ? '<label for="ai-c">Reviewer comment (optional)</label><input id="ai-c" placeholder="e.g. Checked figures against the ledger">' : "") +
+        '<p class="row" style="margin-top:0.75rem">' +
+        (d.status !== "approved" ? '<button class="btn secondary" type="button" id="ai-save">Save edits</button>' +
+          (can("approve") ? '<button class="btn" type="button" id="ai-ok">Approve</button><button class="btn danger" type="button" id="ai-no">Request changes</button>' : '<span class="muted">Your role can edit. An Admin or Programme Officer must approve.</span>') : "") +
+        '<button class="btn secondary" type="button" id="ai-pdf">Download as PDF</button></p>' +
+        '<h3>Review history</h3><ul class="audit">' + d.history.map(function (h) { return "<li>" + esc(h) + "</li>"; }).join("") + "</ul></div>";
+    }
+    return '<h2>AI drafting with human review</h2><p class="muted">Drafts reports, M&amp;E updates, workplans, budget notes and proposal sections from the organisation\'s own records. Nothing is final until a person approves it, and every step is logged.</p>' + gen + rev + approvedList();
+  }
+
+  // ---------- audit ----------
+  function auditList(a) { return table("Audit events (" + a.length + ")", ["When", "User", "Action"], a.map(function (x) { return [esc(x.at), esc(x.who), esc(x.action)]; })); }
+  function vAudit() {
+    if (!can("audit")) return "<h2>Audit trail</h2>" + readOnlyNote("its own actions") + '<p class="muted">The full audit trail is visible to Admins only.</p>' + auditList(S.org.audit.filter(function (a) { return a.who.indexOf(S.role + " (") === 0; }));
+    return '<h2>Audit trail</h2><p class="muted">Sign-ins, exports, financial postings, indicator updates and draft reviews for this organisation, newest first. Production would keep this server-side and tamper-evident.</p>' +
+      '<p class="row"><button class="btn secondary" type="button" id="au-csv">Download audit trail (CSV)</button></p>' + auditList(S.org.audit);
+  }
+
+  // ---------- bindings ----------
+  function on(id, ev, fn) { var el = $(id); if (el) el.addEventListener(ev, fn); }
+  function bind() {
+    var p = $("panel");
+    p.querySelectorAll("[data-go-ai]").forEach(function (b) { b.addEventListener("click", function () { S.draft = newDraft("checks", S.org.projects[0].id); go("ai"); }); });
+    p.querySelectorAll("[data-ind]").forEach(function (inp) {
+      inp.addEventListener("change", function () {
+        var i = S.org.indicators.filter(function (x) { return x.id === inp.getAttribute("data-ind"); })[0], v = parseFloat(inp.value);
+        if (isNaN(v) || v < 0) { inp.value = i.actual; return; }
+        log("Updated indicator '" + i.name + "' from " + i.actual + " to " + v); i.actual = v; i.updated = AS_OF; render(); say("Indicator updated");
+      });
+    });
+    p.querySelectorAll("[data-task]").forEach(function (sel) {
+      sel.addEventListener("change", function () {
+        var t = S.org.tasks.filter(function (x) { return x.id === sel.getAttribute("data-task"); })[0];
+        log("Task '" + t.name + "' status " + t.status + " to " + sel.value); t.status = sel.value; render(); say("Task updated");
+      });
+    });
+    on("f-task", "submit", function (e) {
+      e.preventDefault(); var n = $("nt-n").value.trim(); if (!n) { $("nt-n").focus(); say("Enter a task name."); return; }
+      S.org.tasks.push({ id: "T" + (S.org.tasks.length + 1), project: $("nt-p").value, name: n, owner: $("nt-o").value, due: $("nt-d").value || AS_OF, status: "Open" });
+      log("Added task '" + n + "'"); render(); say("Task added");
+    });
+    on("f-led", "submit", function (e) {
+      e.preventDefault(); var a = parseFloat($("nl-a").value), r = $("nl-r").value.trim(), x = $("nl-x").value.trim();
+      if (!a || a <= 0 || !r || !x) { say("Fill in voucher number, description and amount."); return; }
+      var li = $("nl-l").value, line = li === "inc" ? null : S.org.lines[+li];
+      S.org.ledger.push({ date: $("nl-d").value || AS_OF, ref: r, desc: x, project: line ? line.project : S.org.projects[0].id, line: line ? line.name : "", debit: line ? a : 0, credit: line ? 0 : a, doc: $("nl-s").value });
+      log("Posted ledger entry " + r + " for " + money(a)); render(); say("Ledger entry posted");
+    });
+    on("f-doc", "submit", function (e) {
+      e.preventDefault(); var f = $("nd-f").files[0];
+      var name = f ? f.name : "Sample upload " + (S.org.docs.length + 1) + ".pdf", size = f ? Math.max(1, Math.round(f.size / 1024)) + " KB" : "sample";
+      S.org.docs.unshift({ name: name, type: $("nd-t").value, project: $("nd-p").value, date: AS_OF, size: size });
+      log("Added document '" + name + "' to library"); render(); say("Document added");
+    });
+    on("df", "change", function () { S.docFilter = $("df").value; render(); $("df").focus(); });
+    on("rk", "change", function () { S.report = $("rk").value; render(); $("rk").focus(); });
+    p.querySelectorAll("[data-exp]").forEach(function (b) { b.addEventListener("click", function () { exportReport(b.getAttribute("data-exp")); }); });
+    on("au-csv", "click", function () { log("Exported audit trail as CSV"); download(slug(S.org.name + " audit trail") + ".csv", "text/csv;charset=utf-8", toCSV(["When", "User", "Action"], S.org.audit.map(function (a) { return [a.at, a.who, a.action]; }))); render(); });
+    on("ai-gen", "click", function () { S.draft = newDraft($("ai-t").value, $("ai-p").value); render(); $("ai-x").focus(); say("Draft generated. Review it before approving."); });
+    on("ai-save", "click", function () { S.draft.text = $("ai-x").value; S.draft.history.push(stamp() + " - edited by " + S.role); log("Edited draft '" + S.draft.title + "'"); render(); say("Edits saved"); });
+    on("ai-ok", "click", function () {
+      var d = S.draft, c = $("ai-c").value.trim(); d.text = $("ai-x").value; d.status = "approved";
+      d.history.push(stamp() + " - approved by " + S.role + (c ? ": " + c : ""));
+      S.org.drafts.unshift({ title: d.title, pid: d.pid, by: S.role + " (" + S.email + ")", at: stamp(), text: d.text });
+      S.org.docs.unshift({ name: d.title + " (approved).pdf", type: "Report", project: d.pid, date: AS_OF, size: "generated" });
+      log("Approved draft '" + d.title + "'" + (c ? " with comment: " + c : "")); render(); say("Draft approved and filed in the document library");
+    });
+    on("ai-no", "click", function () { var d = S.draft, c = $("ai-c").value.trim(); d.text = $("ai-x").value; d.status = "changes"; d.history.push(stamp() + " - changes requested by " + S.role + (c ? ": " + c : "")); log("Requested changes on draft '" + d.title + "'"); render(); say("Changes requested"); });
+    on("ai-pdf", "click", function () { var d = S.draft; download(slug(d.title) + ".pdf", "application/pdf", toPDF(d.title + (d.status === "approved" ? " (approved)" : " (DRAFT)"), [{ p: d.text }])); log("Downloaded draft '" + d.title + "' as PDF"); });
+  }
+})();
+</script>
+</body>
+</html>
